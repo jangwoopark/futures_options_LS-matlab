@@ -1,0 +1,24 @@
+close all;
+num=xlsread('puts.xlsx');
+F0=27.65;
+r=0.05;
+sigma=0.44437;
+T=30/366;
+k=3;
+nstep=500;
+K=[7.5	10	12.5	15	17.5	20	21	22	22.5	23	24	25	26	27	28	29	30	31	32	32.5	33	34	35	37.5	40	42.5	45	47.5];
+PriceFBA=zeros(length(K),1);
+PriceFBE=zeros(length(K),1);
+PriceLS=zeros(length(K),1);
+for i=1:length(K)
+    PriceFBE(i)=FutureBlackEuro(-1,F0,K(i),r,T,sigma);
+    PriceFBA(i)=FutureBinomialAmerican(-1, F0, K(i), r, T, sigma, nstep);
+    PriceLS(i)=longstaffschwartz(0,0,1,k,T,F0,K(i),r,sigma);
+end;
+ysu2put=num(1:length(K),5);
+plot(K, [ysu2put PriceFBA PriceFBE PriceLS]);
+h = legend('Bloomberg','Binomial','Blackseuro','LeastSquareMC');
+set(h, 'Location', 'NorthWest');
+title('Silver Mini-NYSE LiFFE.US');
+xlabel('Strike Price');
+ylabel('Put Option Price');

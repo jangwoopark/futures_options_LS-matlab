@@ -1,0 +1,21 @@
+close all;
+num=xlsread('puts.xlsx');
+F0=1618.10;
+r=0.05;
+sigma=0.185837;
+T=45/366;
+k=3;
+nstep=500;
+K=[1600	1610	1620	1630	1640];
+PriceFBA=zeros(length(K),1);
+PriceFBE=zeros(length(K),1);
+PriceLS=zeros(length(K),1);
+for i=1:length(K)
+    PriceFBE(i)=FutureBlackEuro(-1,F0,K(i),r,T,sigma);
+    PriceFBA(i)=FutureBinomialAmerican(-1, F0, K(i), r, T, sigma, nstep);
+    PriceLS(i)=longstaffschwartz(0,0,1,k,T,F0,K(i),r,sigma);
+end;
+z7v2put=num(1:length(K),6);
+plot(K, [z7v2put PriceFBA PriceFBE PriceLS]);
+h = legend('Bloomberg','Binomial','Blackseuro','LeastSquareMC');
+set(h)
